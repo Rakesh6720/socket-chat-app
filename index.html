@@ -75,12 +75,16 @@
 
         // emit a message to the server
         socket.emit("chatMessage", msg);
+
+        // clear input
+        e.target.elements.input.value = "";
+        e.target.elements.input.focus();
       });
 
       socket.on("message", function (msg) {
         console.log(msg);
         var item = document.createElement("li");
-        item.textContent = msg;
+        item.textContent = `${msg.username} (${msg.time}): ${msg.text}`;
         messages.appendChild(item);
         messages.scrollTop = messages.scrollHeight;
       });

@@ -2,9 +2,13 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 
+const formatMessage = require("./utils/messages");
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+
+const botName = "Chatbot";
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -13,19 +17,22 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("New WS connection...");
   // welcome current user
-  socket.emit("message", "Welcome to the chat!");
+  socket.emit("message", formatMessage(botName, "Welcome to the chat!"));
 
   // broadcast when a user connects
-  socket.broadcast.emit("message", "A user has joined the chat!");
+  socket.broadcast.emit(
+    "message",
+    formatMessage(botName, "A user has joined the chat!")
+  );
 
   // runs when client disconnects
   socket.on("disconnect", () => {
-    io.emit("message", "A user has left the chat...");
+    io.emit("message", formatMessage(botName, "A user has left the chat..."));
   });
 
   // listen for chat message
   socket.on("chatMessage", (msg) => {
-    io.emit("message", msg);
+    io.emit("message", formatMessage("USER", msg));
   });
 });
 
