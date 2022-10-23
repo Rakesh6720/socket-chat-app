@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
@@ -8,11 +9,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const botName = "Chatbot";
+app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+const botName = "Chatbot";
 
 io.on("connection", (socket) => {
   console.log("New WS connection...");
