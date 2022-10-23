@@ -21,11 +21,12 @@ const botName = "Chatbot";
 
 io.on("connection", (socket) => {
   socket.on("joinRoom", ({ username, room }) => {
-    console.log("New WS connection...");
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
+
     // welcome current user
     socket.emit("message", formatMessage(botName, "Welcome to the chat!"));
+
     // broadcast when a user connects
     socket.broadcast
       .to(user.room)
@@ -33,6 +34,12 @@ io.on("connection", (socket) => {
         "message",
         formatMessage(botName, `${user.username} has joined the chat!`)
       );
+
+    // send users and room info
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
   });
 
   // runs when client disconnects
@@ -44,6 +51,11 @@ io.on("connection", (socket) => {
         "message",
         formatMessage(botName, `${user.username} has left the chat...`)
       );
+      // send users and room info
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
     }
   });
 
