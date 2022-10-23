@@ -1,17 +1,25 @@
 const express = require("express");
-const app = express();
 const http = require("http");
+const socketio = require("socket.io");
+
+const app = express();
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const io = socketio(server);
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
 io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    io.emit("message: " + msg);
+  // welcome current user
+  socket.emit("message", "Welcome to the chat!");
+
+  // broadcast when a user connects
+  socket.broadcast.emit("message", "A user has joined the chat!");
+
+  // runs when client disconnects
+  socket.on("disconnect", () => {
+    io.emit("message", "A user has left the chat...");
   });
 });
 
