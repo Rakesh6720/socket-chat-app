@@ -21,7 +21,6 @@ socket.on("roomUsers", ({ room, users }) => {
 
 // message from server
 socket.on("message", (message) => {
-  console.log(message);
   outPutMessage(message);
 
   // scroll down
@@ -63,6 +62,6 @@ function outputRoomName(room) {
 // add users to dom
 function outputUsers(users) {
   userList.innerHTML = `
-    ${users.map((user) => `<li>${user.username}</li>`).join()}
+    ${users.map((user) => `<li>${user.username}</li>`).join("")}
   `;
 }
