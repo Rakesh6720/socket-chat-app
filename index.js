@@ -11,6 +11,7 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+  console.log("New WS connection...");
   // welcome current user
   socket.emit("message", "Welcome to the chat!");
 
@@ -20,6 +21,11 @@ io.on("connection", (socket) => {
   // runs when client disconnects
   socket.on("disconnect", () => {
     io.emit("message", "A user has left the chat...");
+  });
+
+  // listen for chat message
+  socket.on("chatMessage", (msg) => {
+    io.emit("message", msg);
   });
 });
 
